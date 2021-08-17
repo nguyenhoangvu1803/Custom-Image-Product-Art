@@ -19,104 +19,47 @@ if(!class_exists('UOY_ART_UPLOAD')) {
         }
 
         public function upload_form() {
+
             $product_id = get_the_ID();
             $upload = get_post_meta($product_id, 'uoy_art_enable', true);
-
             if($upload == 'yes') {
+                // See if there's a media id already saved as post meta
+                $your_img_id = get_post_meta( $product_id, 'uoy_art_image_tutorial', true );
+                // Get the image src
+                $your_img_src = wp_get_attachment_image_src( $your_img_id, 'full' );
                 ?>
-                <div>Upload your photo</div>
-                <div>We’ll focus on the head to chest region. <a href="#" title="Go to photo tips?">Want photo tips?</a></div>
-                <label for="myfile">Select a file:</label>
-                <input type="file" class="uoy-art-file-input" name="uoy-art-file-input" onChange="readURL(this);" value=""/>
-                <input type="hidden" name="uoy-art-file" value=""/>
-                <img id="uoy-art-img" width="80px" height="80px"/>
-                <script>
-                    function readURL(input) {
-                        if (input.files && input.files[0]) {
-                            var file = input.files[0];
-
-                            // Check MB
-                            var filesize = Math.round(file.size / 1024);
-                            if(filesize >= 4096) {
-                                alert("File size < 4MB.");
-                                return;
-                            }
-
-                            // Check img ext: .jpg, .jpeg, .png
-                            // var filterType = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
-                            var filterType = /^(?:image\/jpeg|image\/jpg|image\/png)$/i;
-                            if (!filterType.test(file.type)) {
-                                alert("Please select a valid image. Support: .jpeg, .jpg, .png");
-                                return;
-                            }
-
-                            var reader = new FileReader();
-
-                            reader.onload = function (file) {
-                                var img_tag = $('#uoy-art-img');
-                                var img = new Image;
-                                img.src = file.target.result;
-
-                                img.onload = function() {
-                                    // Check img width, height
-                                    var width = this.width;
-                                    var height = this.height;
-                                    if(width >= 500 && height >= 500) {
-                                        img_tag.attr('src', img.src).width(80).height(80);
-                                        img_tag.css('display', 'block');
-                                        $('input[name="uoy-art-file"]').val(img.src);
-                                    } else {
-                                        alert("Image width & height > 500 px");
-                                        return;
-                                    }
+                <div class="uoy-art-container">
+                    <div>Upload your photo</div>
+                    <div style="margin-bottom: 10px;">We’ll focus on the head to chest region. <a href="javascript:void(0)" class="uoy-art-tips" title="Go to photo tips?">Want photo tips?</a></div>
+                    <div class="flex-container">
+                        <div class="img-show">
+                            <img id="uoy-art-img" width="80px" height="80px"/>
+                            <a href="javascript:void(0)" id="uoy-art-close-img">x</a>
+                        </div>
+                        <input type="file" class="uoy-art-file-input" name="uoy-art-file-input"/>
+                    </div>
+                    <input type="hidden" name="uoy-art-file" value=""/>
+                </div>
+                <div class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>
+                            <?php
+                                if(is_array( $your_img_src )) {
+                            ?>
+                                <img src="<?php echo esc_url($your_img_src[0]);?>"/>
+                            <?php
+                                } else {
+                            ?>
+                                <img src="<?php echo esc_url(UOY_ART_URL . 'public/img/personalized-photo-tips.jpg');?>"/>
+                            <?php
                                 }
-                            };
-
-                            reader.readAsDataURL(file);
-                        }
-                    }
-                </script>
-                <style>
-                    #uoy-art-img {
-                        display: none;
-                    }
-                    .uoy-art-file-input {
-                        color: transparent;
-                        width: 100%;
-                    }
-                    .uoy-art-file-input::-webkit-file-upload-button {
-                        visibility: hidden;
-                    }
-                    .uoy-art-file-input::before {
-                        content: 'Choose Image';
-                        -webkit-box-sizing: border-box;
-                        -moz-box-sizing: border-box;
-                        box-sizing: border-box;
-                        color: black;
-                        display: inline-block;
-                        background: rgb(241, 242, 244);
-                        border-radius: 3px;
-                        padding: 12px;
-                        outline: none;
-                        white-space: nowrap;
-                        -webkit-user-select: none;
-                        cursor: pointer;
-                        text-shadow: 1px 1px #fff;
-                        font-weight: 700;
-                        font-size: 10pt;
-                        width: 100%;
-                        text-align: center;
-                    }
-                    .uoy-art-file-input:hover::before {
-                        border-color: black;
-                    }
-                    .uoy-art-file-input:active {
-                        outline: 0;
-                    }
-                    .uoy-art-file-input:active::before {
-                        background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-                    }
-                </style>
+                            ?>
+                        </p>
+                    </div>
+                </div>
+                <script type='text/javascript' src="<?php echo esc_url(UOY_ART_URL . 'public/js/product-art.js');?>"></script>
+                <link rel='stylesheet'  href='<?php echo esc_url(UOY_ART_URL . 'public/css/product-art.css');?>' type='text/css' media='all'/>
                 <?php
             }
         }
