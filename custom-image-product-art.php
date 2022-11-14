@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     UOYmedia Custom Image Product Art
+ * Plugin Name:     Uoymedia Custom Image Product Art
  * Plugin URI:      https://uoymedia.com/
  * Description:     Upload image for product art - UOYmedia.com.
  * Author:          nguyenhoangvu1803
